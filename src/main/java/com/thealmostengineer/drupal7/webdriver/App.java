@@ -1,4 +1,4 @@
-package com.thealmostengineer.drupal7.websiteupdater;
+package com.thealmostengineer.drupal7.webdriver;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

@@ -1,4 +1,4 @@
-package com.thealmostengineer.drupal7.websiteupdater;
+package com.thealmostengineer.drupal7.webdriver;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
