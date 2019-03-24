@@ -1,5 +1,6 @@
 package com.thealmostengineer.drupal7.websiteupdater;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -17,10 +18,6 @@ import org.openqa.selenium.support.ui.Select;
  */
 public class App 
 {
-//	static String websiteUrl = "http://blueprint/almostengineer/almostengrwebsite/";
-//	static String username = "webdriverupdater";
-//	static String password = "webdriverupdater";
-//	final static String geckoDriverLocation = "/home/almostengineer/java-workspace/geckodriver";
 	static WebDriver driver = null;
 	
 	/**
@@ -32,12 +29,34 @@ public class App
 		System.out.println(message);
 	}
 	
-	static void performUpdate(String websiteUrl, String username, String password, String geckoDriverLocation) throws Exception {
+	static void performBackup(String backupDestination, WebDriver driver) throws Exception {
+		logMessage("Performing database backup");
+		
+		// perform database backup
+		driver.findElement(By.id("toolbar-link-admin-config")).click();
+		driver.findElement(By.linkText("Backup and Migrate")).click();
+		
+		// change the destination
+		WebElement destinationElement = driver.findElement(By.id("edit-destination-id"));
+		Select destinationSelect = new Select(destinationElement);
+		destinationSelect.selectByVisibleText(backupDestination);;
+		
+		driver.findElement(By.id("edit-submit")).click(); // clicking the Backup Now button
+		
+		// verify database backup was successful
+		if (driver.getPageSource().contains("backed up successfully to") == false) {
+			throw new Exception("Not able to perform database backup.");
+		}
+		logMessage("Done performing database backup");
+	}
+	
+	static void performUpdate(String websiteUrl, String username, String password, String geckoDriverLocation, String backupDestination) throws Exception {
 		System.setProperty("webdriver.gecko.driver", geckoDriverLocation); // set location of gecko driver for Firefox
 		
+		int timeOutSeconds = 30;
 		driver = new FirefoxDriver(); // start the browser
 		driver.manage().window().maximize(); // maximize window
-		driver = setTimeouts(driver); // set timeouts
+		driver = setTimeouts(driver, timeOutSeconds); // set timeouts
 		driver.get(websiteUrl + "/user"); // got to website
 		
 		// log in to the website
@@ -60,46 +79,80 @@ public class App
 		
 		driver.findElement(By.id("toolbar-link-admin-reports")).click();
 		driver.findElement(By.linkText("Available updates")).click();
-		driver.findElement(By.linkText("UPDATE")).click(); // may need to be lower case depending on Gecko Driver version
+		
+		driver = setTimeouts(driver, 4);
+		
+		if (driver.findElements(By.linkText("UPDATE")).size() > 0) {
+			driver.findElement(By.linkText("UPDATE")).click();
+		}
+		else {
+			driver.findElement(By.linkText("Update")).click();
+		}
+		
+		driver = setTimeouts(driver, timeOutSeconds);
 		
 		if (driver.getPageSource().contains("All of your projects are up to date.")) {
 			logMessage("All of your projects are up to date.");
 		}
-		    		
-		// perform database backup
-		driver.findElement(By.id("toolbar-link-admin-config")).click();
-		driver.findElement(By.linkText("Backup and Migrate")).click();
-		
-		// change the destination
-		WebElement destinationElement = driver.findElement(By.id("edit-destination-id"));
-		Select destinationSelect = new Select(destinationElement);
-		destinationSelect.selectByVisibleText("/var/tmp");
-		
-		driver.findElement(By.id("edit-submit")).click(); // clicking the Backup Now button
-		
-		// verify database backup was successful
-		if (driver.getPageSource().contains("backed up successfully to") == false) {
-			throw new Exception("Not able to perform database backup");
+		else if (driver.getPageSource().contains("Installed version")) {
+			
+			if (driver.getPageSource().contains("Drupal core")) {
+				throw new Exception("Drupal core needs to be updated. Manual intervention required.");
+			}
+			
+			// module updater
+			List<WebElement> checkboxes = driver.findElements(By.xpath("//input[@title='Select all rows in this table']"));
+			for(int i = 0; i<checkboxes.size(); i++) {
+				WebElement currentCheckbox = checkboxes.get(i);
+				currentCheckbox.click(); // select the checkbox
+			}
+			
+			driver.findElement(By.id("edit-submit")).click(); // Download these updates button
+			
+			// if issue with download updated modules, then fail
+			if (driver.getPageSource().contains("An error has occurred.")) {
+				throw new Exception("Unable to update the out of date modules. Manual intervention required.");
+			}
 		}
+		else {
+			throw new Exception("The update does not have the expected text.");
+		}
+		    		
+		if (backupDestination != null) {
+			performBackup(backupDestination, driver);
+		} // end if
 		
 		// update database page
 		driver.get(websiteUrl + "/update.php");
 		if (driver.getPageSource().contains("Drupal database update") == false) {
-			throw new Exception("Unable to get to database update page");
+			throw new Exception("Unable to access database update page");
 		}
 		
 		driver.findElement(By.xpath("//input[@type='submit']")).click(); // click Continue button
 		
-		// TODO add code for when updates are available
+		logMessage("Checking for database updates");
+		driver = setTimeouts(driver, 5);
+		int submitBtnCount = driver.findElements(By.id("edit-submit")).size();
+		driver = setTimeouts(driver, timeOutSeconds);
 		
-		if (driver.getPageSource().contains("No pending updates.") == false) {
+		if (submitBtnCount > 0) {
+			logMessage("Applying database updates");
+			driver.findElement(By.id("edit-submit")).click(); // click Apply pending updates button
+			
+			if (driver.getPageSource().toLowerCase().contains("failed")) {
+				throw new Exception("Database updates failed"); // throw error if database updates fail
+			}
+			
+			logMessage("Done applying database updates");
+		}
+		else if (driver.getPageSource().contains("No pending updates.")) {
 			logMessage("No pending database updates.");
 		}
+		else {
+			throw new Exception("Unable to determine whether database updates need to be performed.");
+		}
 		
-		// TODO add code for when updates are available
-		    		
 		driver.findElement(By.linkText("Front page")).click(); // go to front page
-		
 		driver.findElement(By.linkText("Log out")).click(); // logout 
 	}
 	
@@ -109,38 +162,35 @@ public class App
 	 * @param wDriver Webdriver object
 	 * @return
 	 */
-	static WebDriver setTimeouts(WebDriver wDriver) {
-		int timeoutInSeconds = 30;
-		wDriver.manage().timeouts().implicitlyWait(timeoutInSeconds, TimeUnit.SECONDS);
-		wDriver.manage().timeouts().pageLoadTimeout(timeoutInSeconds, TimeUnit.SECONDS);
+	static WebDriver setTimeouts(WebDriver wDriver, int timeInSeconds) {
+		wDriver.manage().timeouts().implicitlyWait(timeInSeconds, TimeUnit.SECONDS);
+		wDriver.manage().timeouts().pageLoadTimeout(timeInSeconds, TimeUnit.SECONDS);
 		return wDriver;
 	}
 	
     public static void main( String[] args )
     {
     	int exitCode = 1;
-//    	WebDriver driver = null;
     	
         try {
+        	// read in the arguments
         	// -w websiteaddress -u username -p password -g geckodriver location        	
-        	String webAddress = null, userName = null, password = null, geckoLocation = null;
-        	
+        	String webAddress = null, userName = null, password = null, geckoLocation = null, backupDestination = null;
         	for(int counter = 1 ; counter <= args.length; counter++) {
         		if (args[counter-1].equals("-w")) {
         			webAddress = args[counter];
-        			logMessage("set webaddress: " + webAddress);
         		}
         		else if (args[counter-1].equals("-u")) {
         			userName = args[counter];
-        			logMessage("set username: " + userName);
         		} 
         		else if (args[counter-1].equals("-p")) {
         			password = args[counter];
-        			logMessage("set password: " + password);
         		}
         		else if (args[counter-1].equals("-g")) {
         			geckoLocation = args[counter];
-        			logMessage("set gecko driver: " + geckoLocation);
+        		}
+        		else if (args[counter-1].equals("-b")) {
+        			backupDestination = args[counter];
         		}
         	}
         	
@@ -148,7 +198,9 @@ public class App
         		throw new Exception("All of the required arugments are not present.");
         	}
 
-        	performUpdate(webAddress, userName, password, geckoLocation);
+        	performUpdate(webAddress, userName, password, geckoLocation, backupDestination);
+        	logMessage("Closing browser");
+        	driver.quit(); // close the browser if all goes well
         	logMessage("Update was successful");
         	exitCode = 0;
 		} catch (Exception e) {
@@ -156,10 +208,6 @@ public class App
 			logMessage(e.getMessage());
 			e.printStackTrace();
 		}
-        
-//        if (driver != null) { 
-        	driver.quit(); // close the browser
-//        }
         
         System.exit(exitCode);
     }
