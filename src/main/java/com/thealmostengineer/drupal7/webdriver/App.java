@@ -108,10 +108,10 @@ public class App
         	
         	logMessage("Closing browser");
 //        	driver.quit(); // close the browser if all goes well
-        	logMessage("Update was successful");
+        	logMessage("Process completed successfully");
         	exitCode = 0;
 		} catch (Exception e) {
-			logMessage("Update failed");
+			logMessage("Process failed");
 			logMessage(e.getMessage());
 			e.printStackTrace();
 		}

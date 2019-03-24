@@ -42,22 +42,21 @@ public class PhotoUploader extends App {
 		for (final File fileName : folderPath.listFiles()) {
 			logMessage("Uploading " + fileName.getAbsolutePath());
 			
-			driver.findElement(By.linkText("Add content")).click();
-			driver.findElement(By.linkText("Image")).click(); // 
+			driver.findElement(By.linkText("Add content")).click(); // click the Add Content link
+			driver.findElement(By.linkText("Image")).click(); // select the Image content type
 			
-			driver.findElement(By.id("edit-title")).sendKeys(fileName.getName());
+			driver.findElement(By.id("edit-title")).sendKeys(fileName.getName()); // enter the filename
 			
 			driver.findElement(By.id("edit-field-images-und-0-upload")).sendKeys(fileName.getAbsolutePath()); // select the file
 			
-			driver.findElement(By.id("edit-submit")).click(); // send email
+			driver.findElement(By.id("edit-submit")).click(); // upload the file
 			
 			logMessage("Done uploading " + fileName.getAbsolutePath());
 
 			logMessage("Moving file to archive");
 			File archiveFile = new File(archiveDirectory + "/" + fileName.getName());
-			Files.move(fileName, archiveFile);
+			Files.move(fileName, archiveFile);  // move the file so that it is not reprocessed on future runs
 			logMessage("Done moving file to archive: " + archiveFile.getAbsolutePath());
-			
 		} // end for
 		
 		driver.findElement(By.linkText("Home")).click(); // go to homepage when done
