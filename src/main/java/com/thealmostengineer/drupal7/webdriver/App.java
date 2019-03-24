@@ -60,6 +60,10 @@ public class App
 		return wDriver;
 	}
 	
+	static void setDriverProperities(String geckoDriverLocation) {
+		System.setProperty("webdriver.gecko.driver", geckoDriverLocation); // set location of gecko driver for Firefox
+	}
+	
     public static void main( String[] args )
     {
     	int exitCode = 1;
@@ -68,7 +72,8 @@ public class App
         	// read in the arguments
         	// -w websiteaddress -u username -p password -g geckodriver location        	
         	String webAddress = null, userName = null, password = null, geckoLocation = null, backupDestination = null;
-        	for(int counter = 1 ; counter <= args.length; counter++) {
+        	String localDirectory = null, archiveLocation = null;
+			for(int counter = 1 ; counter <= args.length; counter++) {
         		if (args[counter-1].equals("-w")) {
         			webAddress = args[counter];
         		}
@@ -84,11 +89,25 @@ public class App
         		else if (args[counter-1].equals("-b")) {
         			backupDestination = args[counter];
         		}
+        		else if (args[counter-1].equals("-d")) {
+        			localDirectory = args[counter];
+        		}
+        		else if (args[counter-1].equals("-w")) {
+        			webAddress = args[counter];
+        		}
+        		else if (args[counter-1].equals("-archive")) {
+        			archiveLocation = args[counter];
+        		}
         	}
         	
-        	WebsiteUpdater.performUpdate(webAddress, userName, password, geckoLocation, backupDestination);
+        	setDriverProperities(geckoLocation);
+        	
+//        	WebsiteUpdater.performUpdate(webAddress, userName, password, geckoLocation, backupDestination);
+        	
+        	PhotoUploader.performFileUpload(localDirectory, archiveLocation, webAddress, userName, password);
+        	
         	logMessage("Closing browser");
-        	driver.quit(); // close the browser if all goes well
+//        	driver.quit(); // close the browser if all goes well
         	logMessage("Update was successful");
         	exitCode = 0;
 		} catch (Exception e) {

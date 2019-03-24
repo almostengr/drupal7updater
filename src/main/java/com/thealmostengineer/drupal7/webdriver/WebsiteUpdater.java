@@ -36,7 +36,7 @@ public class WebsiteUpdater extends App {
     		throw new Exception("All of the required arguments are not present.");
     	}
 		
-		System.setProperty("webdriver.gecko.driver", geckoDriverLocation); // set location of gecko driver for Firefox
+		setDriverProperities(geckoDriverLocation);
 		
 		int timeOutSeconds = 30;
 		driver = new FirefoxDriver(); // start the browser
