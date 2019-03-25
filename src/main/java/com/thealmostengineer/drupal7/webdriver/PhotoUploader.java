@@ -61,7 +61,7 @@ public class PhotoUploader extends App {
 		
 		driver.findElement(By.linkText("Home")).click(); // go to homepage when done
 
-		logMessage("Logging out");
+//		logMessage("Logging out");
 //		driver.findElement(By.linkText("Log out")).click(); // log out of site
 	} // end function
 }

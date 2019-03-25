@@ -1,5 +1,6 @@
 package com.thealmostengineer.drupal7.webdriver;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -69,6 +70,8 @@ public class App
     	int exitCode = 1;
     	
         try {
+        	logMessage("Start time: " + LocalDateTime.now().toString());
+        	
         	// read in the arguments
         	// -w websiteaddress -u username -p password -g geckodriver location        	
         	String webAddress = null, userName = null, password = null, geckoLocation = null, backupDestination = null;
@@ -115,6 +118,8 @@ public class App
 			logMessage(e.getMessage());
 			e.printStackTrace();
 		}
+        
+        logMessage("End time: " + LocalDateTime.now().toString());
         
         System.exit(exitCode);
     }
