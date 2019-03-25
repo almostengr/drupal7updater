@@ -9,6 +9,13 @@ import org.openqa.selenium.support.ui.Select;
 
 public class WebsiteUpdater extends App {
 
+	/**
+	 * Peforms an action to take a backup using the Backup and Migrate module
+	 * 
+	 * @param backupDestination		The display name of the destination for the backup
+	 * @param driver				The webdriver object
+	 * @throws Exception
+	 */
 	static void performBackup(String backupDestination, WebDriver driver) throws Exception {
 		logMessage("Performing database backup");
 		
@@ -30,6 +37,16 @@ public class WebsiteUpdater extends App {
 		logMessage("Done performing database backup");
 	}
 	
+	/**
+	 * Performs code and database updates on a Drupal 7 website.
+	 * 
+	 * @param websiteUrl			The URL to the Drupal website
+	 * @param username				The username that access to perform updates on the website
+	 * @param password				The password associated with the username.
+	 * @param geckoDriverLocation	The file path to the Gecko driver
+	 * @param backupDestination		The display name of the destination for the backup
+	 * @throws Exception
+	 */
 	public static void performUpdate(String websiteUrl, String username, String password, String geckoDriverLocation, String backupDestination) throws Exception {
 		
 		if (websiteUrl == null || username == null || password == null || geckoDriverLocation == null) {

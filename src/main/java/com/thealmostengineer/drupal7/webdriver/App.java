@@ -22,37 +22,17 @@ public class App
 	/**
 	 * Prints a message to the console 
 	 * 
-	 * @param message
+	 * @param message	The message to write to the console
 	 */
 	static void logMessage(String message) {
 		System.out.println(message);
-	}
-	
-	static void performBackup(String backupDestination, WebDriver driver) throws Exception {
-		logMessage("Performing database backup");
-		
-		// perform database backup
-		driver.findElement(By.id("toolbar-link-admin-config")).click();
-		driver.findElement(By.linkText("Backup and Migrate")).click();
-		
-		// change the destination
-		WebElement destinationElement = driver.findElement(By.id("edit-destination-id"));
-		Select destinationSelect = new Select(destinationElement);
-		destinationSelect.selectByVisibleText(backupDestination);;
-		
-		driver.findElement(By.id("edit-submit")).click(); // clicking the Backup Now button
-		
-		// verify database backup was successful
-		if (driver.getPageSource().contains("backed up successfully to") == false) {
-			throw new Exception("Not able to perform database backup.");
-		}
-		logMessage("Done performing database backup");
 	}
 	
 	/**
 	 * Sets all of the timeouts used by the automation
 	 * 
 	 * @param wDriver Webdriver object
+	 * @param timeInSeconds 	The timeout value in seconds
 	 * @return
 	 */
 	static WebDriver setTimeouts(WebDriver wDriver, int timeInSeconds) {
@@ -61,10 +41,23 @@ public class App
 		return wDriver;
 	}
 	
+	/**
+	 * Set the property for the Gecko driver location
+	 * @param geckoDriverLocation	The file path to the geckodriver
+	 */
 	static void setDriverProperities(String geckoDriverLocation) {
 		System.setProperty("webdriver.gecko.driver", geckoDriverLocation); // set location of gecko driver for Firefox
 	}
 	
+	/**
+	 * main function. Takes arugments from the command line.
+	 * @param args		-w Website address
+	 * 					-u Username
+	 * 					-p password
+	 * 					-g gecko driver file location
+	 * 					-b backup Destination for Backup and Migrate module
+	 * 					-d local Directory that contains files to be uploaded
+	 */
     public static void main( String[] args )
     {
     	int exitCode = 1;

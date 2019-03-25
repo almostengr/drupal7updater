@@ -14,6 +14,16 @@ import com.google.common.io.Files;
  *
  */
 public class PhotoUploader extends App {
+	/**
+	 * Uploads a folder of files to the website. 
+	 * 
+	 * @param localDirectory	The directory on the local machine that contains the image files
+	 * @param archiveDirectory	The directory on the local machine that the files should be moved to once uploaded
+	 * @param webAddress		The URL to the website
+	 * @param username			The username to login to the website. Username needs to have access to create content.
+	 * @param password			The password associated with the username.
+	 * @throws Exception		Exceptions that are thrown from Webdriver for elements not being found on the page.
+	 */
 	public static void performFileUpload(String localDirectory, String archiveDirectory, String webAddress, String username, String password) throws Exception {
 
 		int timeOutSeconds = 30;
