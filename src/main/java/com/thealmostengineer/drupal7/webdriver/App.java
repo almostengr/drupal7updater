@@ -3,10 +3,7 @@ package com.thealmostengineer.drupal7.webdriver;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 
 /**
  * Perform the action of updating the database and doing database backup on a Drupal 
@@ -48,7 +45,7 @@ public class App
 	static void setDriverProperities(String geckoDriverLocation) {
 		System.setProperty("webdriver.gecko.driver", geckoDriverLocation); // set location of gecko driver for Firefox
 	}
-	
+		
 	/**
 	 * main function. Takes arugments from the command line.
 	 * @param args		-w Website address
@@ -60,15 +57,16 @@ public class App
 	 */
     public static void main( String[] args )
     {
+    	logMessage("Start time: " + LocalDateTime.now().toString());
     	int exitCode = 1;
     	
         try {
-        	logMessage("Start time: " + LocalDateTime.now().toString());
-        	
         	// read in the arguments
         	// -w websiteaddress -u username -p password -g geckodriver location        	
         	String webAddress = null, userName = null, password = null, geckoLocation = null, backupDestination = null;
-        	String localDirectory = null, archiveLocation = null;
+        	String localDirectory = null, archiveLocation = null, programToRun = null;
+        	
+        	// put arguments into local variables
 			for(int counter = 1 ; counter <= args.length; counter++) {
         		if (args[counter-1].equals("-w")) {
         			webAddress = args[counter];
@@ -94,26 +92,36 @@ public class App
         		else if (args[counter-1].equals("-archive")) {
         			archiveLocation = args[counter];
         		}
-        	}
-        	
-        	setDriverProperities(geckoLocation);
-        	
-//        	WebsiteUpdater.performUpdate(webAddress, userName, password, geckoLocation, backupDestination);
-        	
-        	PhotoUploader.performFileUpload(localDirectory, archiveLocation, webAddress, userName, password);
-        	
+        		else if (args[counter-1].equals("-t")) {
+        			programToRun = args[counter];
+        		} // end else if
+        	} // end for
+
+//        	setDriverProperities(geckoLocation);
+
+			// run the appropriate program or exit
+			if (programToRun.equals("uploadphotos")) {
+				PhotoUploader.performFileUpload(localDirectory, archiveLocation, webAddress, userName, password);
+			}
+			else if (programToRun.equals("websiteupdate")) {
+				WebsiteUpdater.performUpdate(webAddress, userName, password, geckoLocation, backupDestination);
+			}
+			else {
+				throw new Exception("No program selected to run");
+			} // end if
+			
         	logMessage("Closing browser");
-//        	driver.quit(); // close the browser if all goes well
+        	driver.quit(); // close the browser if all goes well
+        	
         	logMessage("Process completed successfully");
         	exitCode = 0;
 		} catch (Exception e) {
 			logMessage("Process failed");
-			logMessage(e.getMessage());
+			logMessage(e.getMessage() + System.getProperty("line.separator"));
 			e.printStackTrace();
-		}
+		} // end try catch
         
         logMessage("End time: " + LocalDateTime.now().toString());
-        
         System.exit(exitCode);
     }
 }
