@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class WebsiteUpdater extends App {
+public class WebsiteUpdater extends UserInterface {
 
 	/**
 	 * Performs an action to take a backup using the Backup and Migrate module

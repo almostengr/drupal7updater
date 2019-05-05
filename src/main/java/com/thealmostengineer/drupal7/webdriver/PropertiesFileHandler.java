@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class PropertiesFileHandler {
 	Properties readPropertyFile(String filePath) {
-		App.logMessage("Loading properties file " + filePath);
+		UserInterface.logMessage("Loading properties file " + filePath);
 		Properties properties = new Properties();
 		File file = new File(filePath);
 		FileReader fileReader = null;

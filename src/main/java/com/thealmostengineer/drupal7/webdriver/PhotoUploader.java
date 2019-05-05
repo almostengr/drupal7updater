@@ -13,7 +13,7 @@ import com.google.common.io.Files;
  * @author almostengineer
  *
  */
-public class PhotoUploader extends App {
+public class PhotoUploader extends UserInterface {
 	/**
 	 * Uploads a folder of files to the website. 
 	 * 

@@ -12,7 +12,7 @@ import org.openqa.selenium.WebDriver;
  * @author almostengineer
  * 
  */
-public class App 
+public class UserInterface 
 {
 	static WebDriver driver = null;
 	
