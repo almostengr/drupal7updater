@@ -14,8 +14,6 @@ import org.openqa.selenium.WebDriver;
  */
 public class UserInterface 
 {
-	static WebDriver driver = null;
-	
 	/**
 	 * Prints a message to the console 
 	 * 
@@ -38,6 +36,7 @@ public class UserInterface
     {
     	logMessage("Start time: " + LocalDateTime.now().toString());
     	int exitCode = 1;
+    	WebDriver driver = null;
     	
         try {
         	// read in the arguments
