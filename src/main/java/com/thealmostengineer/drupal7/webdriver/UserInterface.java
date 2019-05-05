@@ -23,7 +23,7 @@ public class UserInterface
 	 */
 	static void logMessage(String message) {
 		System.out.println(message);
-	}
+	} // end function
 		
 	/**
 	 * main function. Takes arugments from the command line.
@@ -48,7 +48,7 @@ public class UserInterface
         	
         	if (args[0].isEmpty()) {
         		throw new Exception("Path to properties file was not provided.");
-        	}
+        	} // end function
     	
         	PropertiesFileHandler propertiesFileHandler = new PropertiesFileHandler();
         	Properties properties = propertiesFileHandler.readPropertyFile(args[0]);

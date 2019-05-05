@@ -7,6 +7,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class PropertiesFileHandler {
+	/**
+	 * Read in the properties file and load it into a variable.
+	 * 
+	 * @param filePath The file path to the properties file to be loaded
+	 * @return
+	 */
 	Properties readPropertyFile(String filePath) {
 		UserInterface.logMessage("Loading properties file " + filePath);
 		Properties properties = new Properties();

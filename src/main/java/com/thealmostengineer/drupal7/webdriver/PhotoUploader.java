@@ -36,7 +36,6 @@ public class PhotoUploader extends UserInterface {
 
 		driver.findElement(By.id("edit-name")).sendKeys(username); // username
 		driver.findElement(By.id("edit-pass")).sendKeys(password); // password
-//		driver.findElement(By.id("edit-pass")).submit(); // click login button alternative
 		driver.findElement(By.id("edit-submit")).click(); // click login button
 		
 		// verify that user name is on page, thus login was successful
@@ -46,7 +45,7 @@ public class PhotoUploader extends UserInterface {
 		}
 		else {
 			logMessage("Logged into website");
-		}
+		} // end if
 		
 		File folderPath = new File(localDirectory);
 		for (final File fileName : folderPath.listFiles()) {
