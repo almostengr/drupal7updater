@@ -24,27 +24,6 @@ public class App
 	static void logMessage(String message) {
 		System.out.println(message);
 	}
-	
-	/**
-	 * Sets all of the timeouts used by the automation
-	 * 
-	 * @param wDriver Webdriver object
-	 * @param timeInSeconds 	The timeout value in seconds
-	 * @return
-	 */
-	static WebDriver setTimeouts(WebDriver wDriver, int timeInSeconds) {
-		wDriver.manage().timeouts().implicitlyWait(timeInSeconds, TimeUnit.SECONDS);
-		wDriver.manage().timeouts().pageLoadTimeout(timeInSeconds, TimeUnit.SECONDS);
-		return wDriver;
-	}
-	
-	/**
-	 * Set the property for the Gecko driver location
-	 * @param geckoDriverLocation	The file path to the geckodriver
-	 */
-	static void setDriverProperities(String geckoDriverLocation) {
-		System.setProperty("webdriver.gecko.driver", geckoDriverLocation); // set location of gecko driver for Firefox
-	}
 		
 	/**
 	 * main function. Takes arugments from the command line.
@@ -65,6 +44,7 @@ public class App
         	// -w websiteaddress -u username -p password -g geckodriver location        	
         	String webAddress = null, userName = null, password = null, geckoLocation = null, backupDestination = null;
         	String localDirectory = null, archiveLocation = null, programToRun = null;
+        	WebDriverSetup webDriverSetup = new WebDriverSetup();
         	
         	// put arguments into local variables
 			for(int counter = 1 ; counter <= args.length; counter++) {
@@ -98,6 +78,7 @@ public class App
         	} // end for
 
 //        	setDriverProperities(geckoLocation);
+			webDriverSetup.setDriverProperities(geckoLocation);
 
 			// run the appropriate program or exit
 			if (programToRun.equals("uploadphotos")) {

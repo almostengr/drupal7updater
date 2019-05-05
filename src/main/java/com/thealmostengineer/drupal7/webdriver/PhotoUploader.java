@@ -25,11 +25,11 @@ public class PhotoUploader extends App {
 	 * @throws Exception		Exceptions that are thrown from Webdriver for elements not being found on the page.
 	 */
 	public static void performFileUpload(String localDirectory, String archiveDirectory, String webAddress, String username, String password) throws Exception {
-
+		WebDriverSetup webDriverSetup = new WebDriverSetup();
 		int timeOutSeconds = 30;
 		driver = new FirefoxDriver(); // start the browser
 		driver.manage().window().maximize(); // maximize window
-		driver = setTimeouts(driver, timeOutSeconds); // set timeouts
+		driver = webDriverSetup.setTimeouts(driver, timeOutSeconds); // set timeouts
 		driver.get(webAddress + "/user"); // got to website
 		
 		// log in to the website
