@@ -1,7 +1,7 @@
 package com.thealmostengineer.drupal7.webdriver;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
+import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
 
@@ -46,6 +46,13 @@ public class App
         	String localDirectory = null, archiveLocation = null, programToRun = null;
         	WebDriverSetup webDriverSetup = new WebDriverSetup();
         	
+        	if (args[0].isEmpty()) {
+        		throw new Exception("Path to properties file was not provided.");
+        	}
+    	
+        	PropertiesFileHandler propertiesFileHandler = new PropertiesFileHandler();
+        	Properties properties = propertiesFileHandler.readPropertyFile(args[0]);
+        	
         	// put arguments into local variables
 			for(int counter = 1 ; counter <= args.length; counter++) {
         		if (args[counter-1].equals("-w")) {
@@ -86,6 +93,16 @@ public class App
 			}
 			else if (programToRun.equals("websiteupdate")) {
 				WebsiteUpdater.performUpdate(webAddress, userName, password, geckoLocation, backupDestination);
+			}
+			else if (properties.getProperty("programToRun").equals("uploadphotos")) {
+				PhotoUploader.performFileUpload(properties.getProperty("localDirectory"), 
+						properties.getProperty("archiveDirectory"), properties.getProperty("webAddress"), 
+						properties.getProperty("username"), properties.getProperty("password"));
+			}
+			else if (properties.getProperty("programToRun").equals("websiteupdate")) {
+				WebsiteUpdater.performUpdate(properties.getProperty("webAddress"), 
+						properties.getProperty("username"), properties.getProperty("password"),
+						properties.getProperty("geckoLocation"), properties.getProperty("backupDestination"));
 			}
 			else {
 				throw new Exception("No program selected to run");
