@@ -14,6 +14,8 @@ import org.openqa.selenium.WebDriver;
  */
 public class UserInterface 
 {
+	static WebDriver driver = null;
+	
 	/**
 	 * Prints a message to the console 
 	 * 
@@ -32,11 +34,9 @@ public class UserInterface
 	 * 					-b backup Destination for Backup and Migrate module
 	 * 					-d local Directory that contains files to be uploaded
 	 */
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) {
     	logMessage("Start time: " + LocalDateTime.now().toString());
     	int exitCode = 1;
-    	WebDriver driver = null;
     	
         try {
         	// read in the arguments
@@ -120,5 +120,5 @@ public class UserInterface
         
         logMessage("End time: " + LocalDateTime.now().toString());
         System.exit(exitCode);
-    }
+    } // end function
 }
